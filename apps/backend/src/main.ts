@@ -19,8 +19,11 @@ const app = express();
 // after middleware has parsed JSON payload, it will attach the JS object it created to the REQ (request) object under the req.body property .... req.body is how we can access the parsed data directly
 
 app.use(express.json()) // add body-parser middleware to server using app.use (aka middleware keyword) and express.json() for the specific body-parser functionality 
-
 // place before any routes that might use body-parser functionality ... now any incoming route will go thru the JSON parsing middleware and all data will be accessible in req.body 
+
+// also add cookie session middleware - FIX 
+var cookieSession = require('cookie-session')
+app.use()
 
 // define root route
 app.get('/api/hello', (_, res) => {

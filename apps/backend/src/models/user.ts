@@ -3,6 +3,7 @@
 // adapted from Mongoose Type Script docs
 
 import { Schema, model } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 // 1. Create an interface representing a document in MongoDB.
 // interface is how we can provide type safety 
@@ -22,6 +23,11 @@ const userSchema = new Schema<IUser>({
 // 3. Create a Model.
 // models in mongoose provide INTERFACE to database for querying, updating, deleting records 
 const User = model<IUser>('User', userSchema);
+
+userSchema.method('checkPassword', async function checkPassword(possiblePass) { // defining method to check password 
+    const match = await bcrypt.compare(possiblePass, this.password);
+    return match;
+  });
 
 export default User; 
 
