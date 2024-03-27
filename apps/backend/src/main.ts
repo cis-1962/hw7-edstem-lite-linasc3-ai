@@ -1,5 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import Question from './models/question';
+import User from './models/user';
 
 // this file is the entry point for the backend server
 
@@ -7,7 +10,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 const PORT = process.env.PORT ?? 8000;
 
-const app = express(); // initialize express app 
+
+// initialize express app 
+const app = express(); 
 
 // add a middleware aka a function that handles a request ... simply call app.use() in Express
 // body parser middleware is super important in handling JSON data sent in HTTP requests and changing them into JS objects that we can easily work with server-side
@@ -22,8 +27,23 @@ app.get('/api/hello', (_, res) => {
   res.json({ message: 'Hello, frontend!' });
 });
 
-// listen
-app.listen(PORT, () => {
+// connect to database
+const startServer = async() => {
+  try { // wrap in try catch block for error handling in case error arises when connecting to database 
+  // 4. Connect to MongoDB
+  await mongoose.connect('mongodb+srv://linasc:<password>@hw7.2wtfqct.mongodb.net/?retryWrites=true&w=majority&appName=HW7');
+
+  console.log("Connected"); 
+
+  // listen only after you've established the database connection 
+  app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Now listening on port ${PORT}.`);
 });
+  } catch (error) { 
+    console.error("Failed to connect to MongoDB", error)
+  }
+}; 
+
+
+startServer(); 
