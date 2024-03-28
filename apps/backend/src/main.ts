@@ -30,8 +30,6 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // sets how long the cookie will be valid in miliseconds. 24 hours. 
 }));
 
-
-
 // define root route ... UPDATE so you set proper routes for these 
 
 
@@ -49,17 +47,26 @@ app.use('/api/account', accountRoutes);
 // all errors from routes should be thrown here 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err.stack); // provide stack trace for debugging 
-  res.status(500).send({error: "An unexpected error occurred."});
+  
+  // Check the type of error or use the error message to set the HTTP status code
+  const statusCode = err.message.startsWith('Unauthorized') ? 401 : 500;
+
+  // Respond to the client with the error message
+  res.status(statusCode).send({
+      error: err.message || 'An unexpected error occurred.',
+  });
 }
 
 app.use(errorHandler);
 
+const username = encodeURIComponent("lchihoub");
+const password = encodeURIComponent("Flj1umf1Zq1B9uYl");
 
 // connect to database
 const startServer = async() => {
   try { // wrap in try catch block for error handling in case error arises when connecting to database 
   // 4. Connect to MongoDB
-  await mongoose.connect('mongodb+srv://lchihoub:<L47GUEuBcjP0TKvn>@hw7.2wtfqct.mongodb.net/?retryWrites=true&w=majority&appName=HW7');
+  await mongoose.connect(`mongodb+srv://${username}:${password}@data1.fpni7cl.mongodb.net/?retryWrites=true&w=majority&appName=data1`)
 
   console.log("Connected"); 
 

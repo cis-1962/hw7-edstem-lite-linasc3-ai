@@ -29,7 +29,10 @@ router.post('/signup', async (req, res, next) => {
         const newUser = new User({username, password}); // if user doesn't exist already, we can create new one!
         await newUser.save(); // save the user in database
         // let user know it succeeded
-        res.status(201).send({message: "Successfully created user"})
+        if (req.session) { // if user signup succeeded, they should also be added to the session 
+            req.session.user = {id: newUser._id.toString(), username: newUser.username};
+            res.status(201).send({message: "Successfully created user"})
+        }
     } catch (error) {
         // handle any errors
         next(error); // throw error with next(error)
@@ -44,15 +47,18 @@ router.post('/login', async(req, res, next) => {
     const user = await User.findOne({username}); 
      // make sure user exists 
      if (!user) {
-        return res.status(401).send({message: "User does not exist"});
+        res.status(401).send({message: "User does not exist"});
         // 401 bc bad request due to client error
+    } else if (req.session?.user?.username) {
+        // if already a session for this user, they are alraedy logged in 
+        res.status(201).send({message: "User is already logged in."})
     } else { 
     try {
         // check that password is correct 
         // match stores true / false 
         const match = await user.checkPassword(password); // check if password is correct, derived from the schema method we defined  
-        
-        if (match) { // if password does match, generate a new session 
+
+        if (match) { // if password does match, generate a session upon successful login 
             if (req.session) { 
                 req.session.user = {id: user._id.toString(), username: user.username};
                 res.status(200).send("Login successful.");

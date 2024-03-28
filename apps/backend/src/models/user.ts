@@ -21,8 +21,10 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true },
 });
 
-userSchema.methods.checkPassword = async function (this: IUser, possiblyPass: string): Promise<boolean> { // defining method to check password 
-    return bcrypt.compare(possiblyPass, this.password);
+userSchema.methods.checkPassword = function (this: IUser, possiblyPass: string): boolean { // defining method to check password 
+    // const isMatch = await bcrypt.compare(possiblyPass, this.password);
+    const isMatch = possiblyPass === this.password; 
+    return isMatch
   };
   // return boolean representing whether password correct or not 
 
