@@ -23,6 +23,6 @@ const questionSchema = new Schema<IQuestion>({
 
 // 3. Create a Model.
 // models in mongoose provide INTERFACE to database for querying, updating, deleting records 
-const Question = model<IQuestion>('User', questionSchema);
+const Question = model<IQuestion>('Question', questionSchema);
 
 export default Question; 

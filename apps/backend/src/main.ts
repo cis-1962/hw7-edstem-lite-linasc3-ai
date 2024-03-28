@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Question from './models/question';
 import User from './models/user';
+import cookieSession from 'cookie-session'; // needed for authentication 
+import questionRoutes from './routes/questions';
+import accountRoutes from './routes/account';
 
 // this file is the entry point for the backend server
 
@@ -21,14 +24,23 @@ const app = express();
 app.use(express.json()) // add body-parser middleware to server using app.use (aka middleware keyword) and express.json() for the specific body-parser functionality 
 // place before any routes that might use body-parser functionality ... now any incoming route will go thru the JSON parsing middleware and all data will be accessible in req.body 
 
-// also add cookie session middleware - FIX 
-var cookieSession = require('cookie-session')
-app.use()
+// also add cookie session middleware 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secretkey1', 'secretkey2'], // our secret keys to authenticate the session 
+  maxAge: 24 * 60 * 60 * 1000 // sets how long the cookie will be valid in miliseconds. 24 hours. 
+}));
 
 // define root route
 app.get('/api/hello', (_, res) => {
   res.json({ message: 'Hello, frontend!' });
 });
+
+// use router with path prefix 
+app.use('/api', questionRoutes);
+
+// use router with path prefix 
+app.use('/api/account', accountRoutes);
 
 // connect to database
 const startServer = async() => {

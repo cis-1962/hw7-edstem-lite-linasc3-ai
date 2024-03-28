@@ -5,6 +5,7 @@
 
 import express from 'express';
 import User from '../models/user';
+import requireAuth from '../middlewares/require-auth'; 
 
 // create router
 const router = express.Router(); 
@@ -41,18 +42,24 @@ router.post('/login', async(req, res) => {
     const {username, password} = req.body; 
 
     const user = await User.findOne({username}); 
-     // make sure username and password exist
+     // make sure user exists 
      if (!user) {
         return res.status(401).send({message: "User does not exist"});
-        // 400 bc bad request due to client error
+        // 401 bc bad request due to client error
     } else { 
     try {
+        // check that password is correct 
+        // match stores true / false 
         const match = await user.checkPassword(password); // check if password is correct, derived from the schema method we defined  
-        if (match) { 
-            res.status(200).send("Login successful.")
+        
+        if (match) { // if password does match, generate a new session 
+            if (req.session) { 
+                req.session.user = {id: user._id.toString(), username: user.username};
+                res.status(200).send("Login successful.");
+            }
         } else {
             // wrong password 
-            res.status(401).send("Wrong password.")
+            res.status(401).send("Wrong password.");
         }
     } catch (error) {
         res.status(500).send("Internal server error. Could not log in.")
@@ -61,8 +68,12 @@ router.post('/login', async(req, res) => {
 })
 
 // post route for logout 
-router.post('/logout', async(req, res) => {
-    
+// need requireAuth because user must be logged in before logging out (check that user is defined in session object)
+router.post('/logout', requireAuth, async(req, res) => {
+    // clear session so no user info retained in it 
+    req.session = null; 
+    // send response indicating logged out 
+    res.send({message: "Successfully logged out"}); 
 })
 
 

@@ -2,14 +2,15 @@
 
 // adapted from Mongoose Type Script docs
 
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 // 1. Create an interface representing a document in MongoDB.
 // interface is how we can provide type safety 
-interface IUser {
+interface IUser extends Document { // extend document so we can use the method check pass 
   username: string;
   password: string;
+  checkPassword: (possiblyPassword: string) => Promise<boolean>; // promise because password validation may or may not be successful 
 }
 
 // 2. Create a Schema corresponding to the document interface.
@@ -20,14 +21,15 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true },
 });
 
+userSchema.methods.checkPassword = async function (this: IUser, possiblyPass: string): Promise<boolean> { // defining method to check password 
+    return bcrypt.compare(possiblyPass, this.password);
+  };
+  // return boolean representing whether password correct or not 
+
 // 3. Create a Model.
 // models in mongoose provide INTERFACE to database for querying, updating, deleting records 
 const User = model<IUser>('User', userSchema);
 
-userSchema.method('checkPassword', async function checkPassword(possiblePass) { // defining method to check password 
-    const match = await bcrypt.compare(possiblePass, this.password);
-    return match;
-  });
 
 export default User; 
 
