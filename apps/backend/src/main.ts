@@ -13,7 +13,6 @@ import accountRoutes from './routes/account';
 dotenv.config();
 const PORT = process.env.PORT ?? 8000;
 
-
 // initialize express app 
 const app = express(); 
 
@@ -31,8 +30,20 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // sets how long the cookie will be valid in miliseconds. 24 hours. 
 }));
 
-// define error handling middleware
 
+
+// define root route ... UPDATE so you set proper routes for these 
+
+
+// use router with path prefix 
+app.use('/api', questionRoutes);
+
+// use router with path prefix 
+app.use('/api/account', accountRoutes);
+
+
+// define error handling middleware
+// place after .use calls so it catches errors 
 // based off express docs 
 // take in error, request, response, and next 
 // all errors from routes should be thrown here 
@@ -41,21 +52,14 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   res.status(500).send({error: "An unexpected error occurred."});
 }
 
-// define root route ... UPDATE so you set proper routes for these 
-
 app.use(errorHandler);
 
-// use router with path prefix 
-app.use('/api', questionRoutes);
-
-// use router with path prefix 
-app.use('/api/account', accountRoutes);
 
 // connect to database
 const startServer = async() => {
   try { // wrap in try catch block for error handling in case error arises when connecting to database 
   // 4. Connect to MongoDB
-  await mongoose.connect('mongodb+srv://linasc:<password>@hw7.2wtfqct.mongodb.net/?retryWrites=true&w=majority&appName=HW7');
+  await mongoose.connect('mongodb+srv://lchihoub:<L47GUEuBcjP0TKvn>@hw7.2wtfqct.mongodb.net/?retryWrites=true&w=majority&appName=HW7');
 
   console.log("Connected"); 
 

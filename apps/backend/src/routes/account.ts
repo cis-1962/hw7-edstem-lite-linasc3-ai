@@ -69,7 +69,7 @@ router.post('/login', async(req, res, next) => {
 
 // post route for logout 
 // need requireAuth because user must be logged in before logging out (check that user is defined in session object)
-router.post('/logout', requireAuth, async(req, res, next) => {
+router.post('/logout', requireAuth, (req, res, next) => {
     // clear session so no user info retained in it 
    try { req.session = null; 
     // send response indicating logged out 
