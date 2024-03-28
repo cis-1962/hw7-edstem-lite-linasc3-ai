@@ -11,7 +11,7 @@ import requireAuth from '../middlewares/require-auth';
 const router = express.Router(); 
 
 // post route for signup with body of username and password 
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
     const {username, password} = req.body; 
 
     // make sure username and password exist
@@ -32,13 +32,13 @@ router.post('/signup', async (req, res) => {
         res.status(201).send({message: "Successfully created user"})
     } catch (error) {
         // handle any errors
-        res.status(500).send({message: 'Error, could not create user', error: error.message})
+        next(error); // throw error with next(error)
     }
 })
 
 // post route for login with body of username and password 
 
-router.post('/login', async(req, res) => {
+router.post('/login', async(req, res, next) => {
     const {username, password} = req.body; 
 
     const user = await User.findOne({username}); 
@@ -62,21 +62,22 @@ router.post('/login', async(req, res) => {
             res.status(401).send("Wrong password.");
         }
     } catch (error) {
-        res.status(500).send("Internal server error. Could not log in.")
+        next(error); // pass error to centralized handler 
     }
     } 
 })
 
 // post route for logout 
 // need requireAuth because user must be logged in before logging out (check that user is defined in session object)
-router.post('/logout', requireAuth, async(req, res) => {
+router.post('/logout', requireAuth, async(req, res, next) => {
     // clear session so no user info retained in it 
-    req.session = null; 
+   try { req.session = null; 
     // send response indicating logged out 
     res.send({message: "Successfully logged out"}); 
-})
-
-
+   } catch (error) {
+    next(error);
+   }
+});
 
 export default router; 
 
