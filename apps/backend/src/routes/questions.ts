@@ -18,7 +18,7 @@ router.post('/questions/add', requireAuth, async (req, res, next) => {
     // make sure the details exist 
     // don't need to check for answer because may not be an answer yet 
     if (!questionText || ! author) {
-        return res.status(400).send({message: "You must provide question text and be signed in."});
+        return res.status(400).send({message: "You must provide question text and/or be signed in."});
         // if they don't exist, 400 bc bad request due to client error
     }
 
@@ -67,7 +67,7 @@ router.post('/questions/answer', requireAuth, async (req, res, next) => {
 
  // as usual, check if what we received is valid aka not missing
  if (!_id || !answer) { // if missing, return 400 client error code 
-    return res.status(400).send({message: "You must provide both a question ID and answer."})
+    return res.status(400).send({message: "You must provide both a question _ID and answer."})
  }
 
  // now let's try to update field 
@@ -76,7 +76,6 @@ router.post('/questions/answer', requireAuth, async (req, res, next) => {
     
     if (!question) { 
         // if we couldn't find the question matching the id, then we need to return not found error 
-
         return res.status(404).send({message: "Question not found."});
 
     }
