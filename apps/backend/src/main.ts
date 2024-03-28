@@ -47,7 +47,7 @@ app.use('/api/account', accountRoutes);
 // all errors from routes should be thrown here 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err.stack); // provide stack trace for debugging 
-  
+
   // Check the type of error or use the error message to set the HTTP status code
   const statusCode = err.message.startsWith('Unauthorized') ? 401 : 500;
 
@@ -59,6 +59,8 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 app.use(errorHandler);
 
+// left these here so database can be accessed for grading, 
+// but in theory should be in .env file  
 const username = encodeURIComponent("lchihoub");
 const password = encodeURIComponent("Flj1umf1Zq1B9uYl");
 
