@@ -15,7 +15,8 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@cis-1962/eslint-config": "^1.0.4",

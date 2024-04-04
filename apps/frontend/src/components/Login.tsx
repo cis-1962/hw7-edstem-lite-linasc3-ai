@@ -25,7 +25,7 @@ function Login() {
             .then(res => {
                 console.log(res); 
                 console.log(res.data);
-                navigate("localhost:3000/home") 
+                navigate("/home") 
                 // go to home page if successful 
             })
             .catch(error => {
@@ -55,7 +55,7 @@ function Login() {
           </Button>
 
           <p> Do not have an account? </p>
-          <Link to="localhost:3000/signup">Sign up here.</Link>
+          <Link to="/signup">Sign up here.</Link>
 
       </Form></>
   );

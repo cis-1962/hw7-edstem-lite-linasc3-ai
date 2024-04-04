@@ -28,7 +28,7 @@ function SignUp() {
             .then(res => {
                 console.log(res); 
                 console.log(res.data);
-                navigate("localhost:3000/home") 
+                navigate("/home") 
                 // go to home page if successful 
             })
             .catch(error => {
