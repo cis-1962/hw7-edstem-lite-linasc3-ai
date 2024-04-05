@@ -25,7 +25,7 @@ function Login() {
             .then(res => {
                 console.log(res); 
                 console.log(res.data);
-                navigate("/home") 
+                navigate("/") 
                 // go to home page if successful 
             })
             .catch(error => {
@@ -38,7 +38,8 @@ function Login() {
     }
 
   return (
-    <><h1> Sign Up </h1>
+    <div className="Login" style={{backgroundColor: "#e75480", padding: '500px', color: "white"}}> 
+    <><h1 style={{marginBottom: '10px'}}> Log In </h1>
     <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Username:</Form.Label>
@@ -54,10 +55,11 @@ function Login() {
               Log in
           </Button>
 
-          <p> Do not have an account? </p>
-          <Link to="/signup">Sign up here.</Link>
+          <p style={{marginTop: "10px"}}> Do not have an account? </p>
+          <Link to="/signup" style={{color: "blue"}}>Sign up here.</Link>
 
       </Form></>
+      </div> 
   );
 }
 

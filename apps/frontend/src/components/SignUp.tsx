@@ -21,14 +21,15 @@ function SignUp() {
         // format user in object database expects 
         const user = {
             username, 
-            password
+            password, 
+            logStatus: true
         };
 
         axios.post("/api/account/signup", user) // send post request to add new user to database 
             .then(res => {
                 console.log(res); 
                 console.log(res.data);
-                navigate("/home") 
+                navigate("/") 
                 // go to home page if successful 
             })
             .catch(error => {
@@ -41,7 +42,8 @@ function SignUp() {
     }
 
   return (
-    <><h1> Sign Up </h1>
+    <div className="SignUp" style={{backgroundColor: "#e75480", padding: '500px', color: "white"}}> 
+    <><h1 style={{padding: "15px"}}> Sign Up </h1>
     <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Username:</Form.Label>
@@ -57,10 +59,11 @@ function SignUp() {
               Sign Up
           </Button>
 
-          <p> Already have an account? </p>
-          <Link to="/login">Sign in here.</Link>
+          <p style={{padding: '10px'}}> Already have an account? </p>
+          <Link to="/login" style={{color: "blue"}}>Sign in here.</Link>
 
       </Form></>
+      </div> 
   );
 }
 

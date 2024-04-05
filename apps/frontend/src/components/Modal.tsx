@@ -8,25 +8,24 @@ interface QuestionModalProps {
   }
 
 const QuestionModal: React.FC<QuestionModalProps> = ({ show, handleClose }) => {
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState("");
 
-  const submitQuestion = async (e) => {
+  const submitQuestion = (e) => {
     e.preventDefault();
-    // await the result from the route that tries to post the question 
-    try {
-      await axios.post('/api/questions/add', { question });
 
+    // try to post question 
+    axios.post('/api/questions/add', { questionText: question }).then(res => {
+      console.log(res); 
+      console.log(res.data);
+  }).catch(error => {
+      console.error('Error submitting question!', error);
+  });
       // Close the modal after submission
       handleClose();
 
       // clear form for next user input 
       setQuestion('');
-
-    } catch (error) {
-      console.error("Error submitting question:", error);
-      // Handle  error 
-    }
-  };
+  }
 
   return (
     <Modal show={show} onHide={handleClose}>

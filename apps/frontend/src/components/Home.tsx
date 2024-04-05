@@ -27,17 +27,17 @@ function Home() {
     // every time page renders, check whether user is logged in 
     // and update state to decide whether or not we should show 
     // certain view 
-    useEffect(() => {
-        axios.get('/api/auth/status')
-            .then(response => {
-                setLoggedIn(response.data.loggedIn);
-                setUsersName(response.data.username);
-            })
-            .catch(error => {
-                console.error('Error fetching auth status:', error);
-                alert("You are not logged in.")
-            });
-    }, []);
+
+    // useEffect(() => {
+    //     axios.get('/api/account/auth/status')
+    //         .then(response => {
+    //             setLoggedIn(response.data.loggedIn);
+    //             setUsersName(response.data.username);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching auth status:', error);
+    //         });
+    // }, []);
 
     // navigate to log in when you click the log in button 
     const routeChange = () => {
@@ -52,7 +52,7 @@ function Home() {
     // handle logging out 
     const handleLogOut = () => {
         setLoggedIn(false); 
-        axios.post("/account/logout") 
+        axios.post("/api/account/logout") 
         .then(res => {
             console.log(res); 
             console.log(res.data);
@@ -104,16 +104,39 @@ function Home() {
   if (loggedIn) { 
     return (
     <> 
-    <div className="header"> {/* TODO: add styling for header */}
-    <h1 style={{display: 'flex', justifyContent: 'flex-start'}}> CampusWire Lite </h1> 
-    <h2 style={{justifyContent: 'right'}}> Hi {usersName} </h2> {/* TODO: need to retrieve user's name and display here, and log out button */}
-    <Button variant="primary" type="submit" onClick={(handleLogOut)}>
-              Log Out 
-    </Button>
-    </div> 
+    <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
 
-    <div className='left-pane'> 
+    <div className="header" style={{ 
+      flex: '0 1 auto', 
+      padding: '20px', 
+      backgroundColor: '#A94064', 
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      color: "white" 
+  }}>
+    <h1 style={{ 
+        margin: 0, 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center'
+    }}>
+          CampusWire Lite
+          <span>Hi {usersName}</span>
+        </h1>
+        <Button variant="primary" type="submit" onClick={handleLogOut} style={{ marginTop: '10px' }}>
+          Log Out
+        </Button>
+      </div>
+
+      <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'row', backgroundColor: "pink", padding: '500px' }}>
+      <div className='left-pane' style={{ 
+      flex: '0 0 250px', /* fixed width for the sidebar */
+      backgroundColor: '#fff', 
+      padding: '20px', 
+      boxShadow: 'inset -1px 0px 0px rgba(0,0,0,0.1)', 
+      overflowY: 'auto' /* if there are many questions, enable scrolling */
+    }}>
     {/* define an add new question button that sends a post request*/}
+
     <Button variant="primary" type="submit" onClick={(addNewQuestion)}>
               Add New Question + 
     </Button>
@@ -122,7 +145,7 @@ function Home() {
     <ul>
             {data.map((question) => (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-            <li key={question.id} className="card" style={{ width: '10rem' }} onClick={() => handleCardClick(question)}>
+            <li key={question.id} className="card" style={{ width: '50rem' }} onClick={() => handleCardClick(question)}>
             <h5 className="card-title">{question.questionText}</h5>
             </li>
         ))}
@@ -136,14 +159,19 @@ function Home() {
 
     </div>
 
-    <div className="right-pane" style={{ marginLeft: '20px' }}>
+    <div className="right-pane" style={{ 
+      flex: '1', 
+      backgroundColor: '#fff', 
+      padding: '20px', 
+      overflowY: 'auto' /* if content is too long, enable scrolling */
+    }}>
         {/* display selected question */}
 
         {displayedQuestion ? (
                         <><div className="card">
                     <h5 className="card-title">{displayedQuestion.questionText}</h5>
                     <em> Author: </em>
-                    <p> {displayedQuestion.author} </p>
+                    <p> {displayedQuestion.author.username} </p>
                     <em> Answer: </em>
                     <p> {displayedQuestion.answer} </p>
                 </div><div className="answerQuestion">
@@ -161,35 +189,59 @@ function Home() {
                     ) : "Click a question to view details."}
 
     </div> 
-
+    </div> 
+    </div> 
 
     </>
+    
     );  
   } else { // user is logged out
     return (
     <>
-    <div className="header"> {/* TODO: add styling for header */}
+    <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', padding: "300px", backgroundColor: "pink"}}>
+    <div className="header" style={{ 
+      flex: '0 1 auto', 
+      padding: '20px', 
+      backgroundColor: '#A94064', 
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      color: "white" 
+  }}>
     <h1 style={{display: 'flex', justifyContent: 'flex-start'}}> CampusWire Lite </h1> 
     </div> 
 
-    <div className='left-pane'>
+    <div className='left-pane' style={{ 
+      flex: '0 0 250px', /* fixed width for the sidebar */
+      backgroundColor: '#fff', 
+      padding: '20px', 
+      boxShadow: 'inset -1px 0px 0px rgba(0,0,0,0.1)', 
+      overflowY: 'auto' /* if there are many questions, enable scrolling */
+    }}>
           <Button variant="primary" type="submit" onClick={routeChange}>
               Log in to submit a question 
           </Button>
 
-          <ul>
+          {data && data.length > 0 ? (
+        <ul>
             {data.map((question) => (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-            <li key={question.id} className="card" style={{ width: '10rem' }} onClick={() => handleCardClick(question)}>
-            <h5 className="card-title">{question.questionText}</h5>
-            </li>
-        ))}
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+                <li key={question.id} className="card" style={{ width: '10rem' }} onClick={() => handleCardClick(question)}>
+                    <h5 className="card-title">{question.questionText}</h5>
+                </li>
+            ))}
         </ul>
+    ) : (
+        <p>No questions yet. Add a question to begin!</p>
+    )}
 
       </div>
         {/* conditionally display based on which question selected 
         if there is something selected, display it, otherwise tell them to select */}
-        <div className="right-pane" style={{ marginLeft: '20px' }}>
+        <div className="right-pane" style={{ 
+      flex: '1', 
+      backgroundColor: '#fff', 
+      padding: '20px', 
+      overflowY: 'auto' /* if content is too long, enable scrolling */
+    }}>
                     {displayedQuestion ? (
                         <div className="card">
                             <h5 className="card-title">{displayedQuestion.questionText}</h5>
@@ -200,6 +252,7 @@ function Home() {
                         </div>
                     ) : "Click a question to view details."}
         </div>
+        </div> 
         </>
         )} 
 }

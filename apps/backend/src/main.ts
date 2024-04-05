@@ -20,12 +20,15 @@ const app = express();
 // body parser middleware is super important in handling JSON data sent in HTTP requests and changing them into JS objects that we can easily work with server-side
 // after middleware has parsed JSON payload, it will attach the JS object it created to the REQ (request) object under the req.body property .... req.body is how we can access the parsed data directly
 
-app.use(express.json()) // add body-parser middleware to server using app.use (aka middleware keyword) and express.json() for the specific body-parser functionality 
-// place before any routes that might use body-parser functionality ... now any incoming route will go thru the JSON parsing middleware and all data will be accessible in req.body 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cors = require('cors');
 app.use(cors());
+
+app.use(express.json()) // add body-parser middleware to server using app.use (aka middleware keyword) and express.json() for the specific body-parser functionality 
+// place before any routes that might use body-parser functionality ... now any incoming route will go thru the JSON parsing middleware and all data will be accessible in req.body 
+
+
 
 // also add cookie session middleware 
 app.use(cookieSession({
@@ -33,9 +36,6 @@ app.use(cookieSession({
   keys: ['secretkey1', 'secretkey2'], // our secret keys to authenticate the session 
   maxAge: 24 * 60 * 60 * 1000 // sets how long the cookie will be valid in miliseconds. 24 hours. 
 }));
-
-// define root route ... UPDATE so you set proper routes for these 
-
 
 // use router with path prefix 
 app.use('/api', questionRoutes);
