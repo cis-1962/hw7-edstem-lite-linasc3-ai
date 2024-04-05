@@ -66,7 +66,7 @@ function Home() {
 
     // handle submitting the answer 
     const handleSubmitAnswer = (question) => {
-        event.preventDefault(); 
+        question.preventDefault(); 
         
         // format data ... only need ot send questionText 
         // i don't think this is correct because u should just be able to submit answer 
@@ -100,7 +100,9 @@ function Home() {
         setDisplayedQuestion(question); // update question to display based on click 
     }
 
+  // eslint-disable-next-line unicorn/prefer-ternary
   if (loggedIn) { 
+    return (
     <> 
     <div className="header"> {/* TODO: add styling for header */}
     <h1 style={{display: 'flex', justifyContent: 'flex-start'}}> CampusWire Lite </h1> 
@@ -162,8 +164,9 @@ function Home() {
 
 
     </>
-    return 
+    );  
   } else { // user is logged out
+    return (
     <>
     <div className="header"> {/* TODO: add styling for header */}
     <h1 style={{display: 'flex', justifyContent: 'flex-start'}}> CampusWire Lite </h1> 
@@ -198,7 +201,7 @@ function Home() {
                     ) : "Click a question to view details."}
         </div>
         </>
-        } 
+        )} 
 }
 
 export default Home;
