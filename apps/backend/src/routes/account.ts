@@ -26,11 +26,11 @@ router.post('/signup', async (req, res, next) => {
         if (sameUser) { // if this username is already taken, send bad request client error message telling them to get another username 
             return res.status(401).send({message: 'User with this name already exists.'});
         }
-        const newUser = new User({username, password}); // if user doesn't exist already, we can create new one!
+        const newUser = new User({username, password, logStatus: true}); // if user doesn't exist already, we can create new one!
         await newUser.save(); // save the user in database
         // let user know it succeeded
         if (req.session) { // if user signup succeeded, they should also be added to the session 
-            req.session.user = {id: newUser._id.toString(), username: newUser.username};
+            req.session.user = {id: newUser._id.toString(), username: newUser.username, logStatus: newUser.logStatus};
             res.status(201).send({message: "Successfully created user"})
         }
     } catch (error) {
@@ -59,8 +59,11 @@ router.post('/login', async(req, res, next) => {
         const match = await user.checkPassword(password); // check if password is correct, derived from the schema method we defined  
 
         if (match) { // if password does match, generate a session upon successful login 
+            user.logStatus = true; 
+            await user.save(); 
+
             if (req.session) { 
-                req.session.user = {id: user._id.toString(), username: user.username};
+                req.session.user = {id: user._id.toString(), username: user.username, logStatus: true};
                 res.status(200).send("Login successful.");
             }
         } else {
@@ -84,6 +87,24 @@ router.post('/logout', requireAuth, (req, res, next) => {
     next(error);
    }
 });
+
+router.get('/auth/status', (req, res) => {
+    if (req.session && req.session.user) {
+        // User is logged in
+        res.status(200).send({
+            loggedIn: true,
+            user: {
+                id: req.session.user.id,
+                username: req.session.user.username
+            }
+        });
+    } else {
+        // User is not logged in
+        res.status(200).send({ loggedIn: false });
+    }
+});
+
+
 
 export default router; 
 

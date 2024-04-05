@@ -21,7 +21,7 @@ function Login() {
             password: password
         };
 
-        axios.post("/account/login", user) // send post request with username and password to attempt to log in 
+        axios.post("/api/account/login", user) // send post request with username and password to attempt to log in 
             .then(res => {
                 console.log(res); 
                 console.log(res.data);

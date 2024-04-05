@@ -20,11 +20,11 @@ function SignUp() {
         
         // format user in object database expects 
         const user = {
-            name: username, 
-            password: password
+            username, 
+            password
         };
 
-        axios.post("/account/signup", user) // send post request to add new user to database 
+        axios.post("/api/account/signup", user) // send post request to add new user to database 
             .then(res => {
                 console.log(res); 
                 console.log(res.data);
@@ -58,7 +58,7 @@ function SignUp() {
           </Button>
 
           <p> Already have an account? </p>
-          <Link to="localhost:3000/login">Sign in here.</Link>
+          <Link to="/login">Sign in here.</Link>
 
       </Form></>
   );

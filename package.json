@@ -13,6 +13,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "cors": "^2.8.5",
     "turbo": "^1.11.2"
   }
 }

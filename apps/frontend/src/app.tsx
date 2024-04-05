@@ -1,47 +1,24 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Home from './components/Home';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './app.css';
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
-    <>
+
+    <Router>
       <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-        <button
-          type="button"
-          onClick={async () => {
-            const res = await fetch('/api/hello', { method: 'GET' });
-            const data = (await res.json()) as { message: string };
-            // eslint-disable-next-line no-alert
-            alert(data.message);
-          }}
-        >
-          Hello, backend!
-        </button>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </Router>
   );
 }
 

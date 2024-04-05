@@ -3,6 +3,7 @@ declare namespace CookieSessionInterfaces {
       user?: {
         id: string; 
         username: string; 
+        logStatus: boolean; 
       }
     }
   }

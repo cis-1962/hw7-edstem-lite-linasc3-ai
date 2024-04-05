@@ -23,6 +23,10 @@ const app = express();
 app.use(express.json()) // add body-parser middleware to server using app.use (aka middleware keyword) and express.json() for the specific body-parser functionality 
 // place before any routes that might use body-parser functionality ... now any incoming route will go thru the JSON parsing middleware and all data will be accessible in req.body 
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const cors = require('cors');
+app.use(cors());
+
 // also add cookie session middleware 
 app.use(cookieSession({
   name: 'session',
@@ -38,7 +42,6 @@ app.use('/api', questionRoutes);
 
 // use router with path prefix 
 app.use('/api/account', accountRoutes);
-
 
 // define error handling middleware
 // place after .use calls so it catches errors 
@@ -61,21 +64,14 @@ app.use(errorHandler);
 
 // left these here so database can be accessed for grading, 
 // but in theory should be in .env file  
-// const username = encodeURIComponent("lchihoub");
-// const password = encodeURIComponent("Flj1umf1Zq1B9uYl");
-
-const dbUsername = encodeURIComponent(db.env.DB_USERNAME);
-const dbPassword = encodeURIComponent(db.env.DB_PASSWORD);
-const dbHost = db.env.DB_HOST;
-const dbName = db.env.DB_NAME; 
-
-
+const username = encodeURIComponent("lchihoub");
+const password = encodeURIComponent("Flj1umf1Zq1B9uYl");
 
 // connect to database
 const startServer = async() => {
   try { // wrap in try catch block for error handling in case error arises when connecting to database 
   // 4. Connect to MongoDB
-  await mongoose.connect(`mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}?retryWrites=true&w=majority&appName=${dbName}`);
+  await mongoose.connect(`mongodb+srv://${username}:${password}@data1.fpni7cl.mongodb.net/?retryWrites=true&w=majority&appName=data1`)
 
   console.log("Connected"); 
 
