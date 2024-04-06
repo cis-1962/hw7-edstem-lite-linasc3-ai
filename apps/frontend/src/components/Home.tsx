@@ -66,22 +66,41 @@ function Home() {
     };
 
     // handle submitting the answer 
-    const handleSubmitAnswer = async (question) => {
-        question.preventDefault(); 
+    const handleSubmitAnswer = async (event) => {
+        event.preventDefault(); 
+        
+        if (!displayedQuestion || !displayedQuestion._id) {
+            console.error('No question selected or question ID missing.');
+            return; // Ensure there's a selected question and it has an ID
+        }
+
         
         // format data ... only need ot send questionText 
         // i don't think this is correct because u should just be able to submit answer 
         const questionData = {
-            questionAnswer: questionAnswer
+            _id: displayedQuestion._id,
+            answer: questionAnswer
         };
 
         try {
             const res = await axios.post("/api/questions/answer", questionData);
             console.log(res);
             console.log(res.data);
+            // update display automatically 
+            const updatedQuestion = res.data.question;
+            setDisplayedQuestion(updatedQuestion);
+
+            // clear answer field 
+            setQuestionAnswer("");
+
+            // (!!) need to also update display of questions automatically 
+
+            // indicate success to user 
+            alert("Answer submitted successfully!");
 
         } catch (error) {
             console.error('There was an error!', error);
+            alert("Failed to submit answer. Please try again.");
         }
     }
 
@@ -92,8 +111,10 @@ function Home() {
       };
 
     // destructure JSON object to retrieve data returned from fetcher 
-    const { data } = useSWR('/api/questions/', fetcher)
+    const { data } = useSWR('/api/questions/', fetcher, { refreshInterval: 2000 })
 
+    // refreshInterval will automatically fetch every 2 seconds 
+    
     // handle error fetching questions 
 
     // handle clicking on card 
@@ -174,7 +195,7 @@ function Home() {
           <>
             <div className="card" style={{ marginBottom: '20px' }}>
               <h5 className="card-title">{displayedQuestion.questionText}</h5>
-              <p><em>Author:</em> {displayedQuestion.author.username}</p>
+              <p><em>Author:</em> {usersName}</p>
               <p><em>Answer:</em> {displayedQuestion.answer}</p>
             </div>
             <div className="answerQuestion">
@@ -250,7 +271,7 @@ function Home() {
                         <div className="card">
                             <h5 className="card-title">{displayedQuestion.questionText}</h5>
                             <em> Author: </em> 
-                            <p> {displayedQuestion.author} </p> 
+                            <p> {usersName} </p> 
                             <em> Answer: </em> 
                             <p> {displayedQuestion.answer} </p> 
                         </div>

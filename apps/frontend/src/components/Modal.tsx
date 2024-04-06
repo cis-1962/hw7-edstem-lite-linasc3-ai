@@ -19,6 +19,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, handleClose }) => {
       console.log(res.data);
   }).catch(error => {
       console.error('Error submitting question!', error);
+      alert("Failed to submit question. Please try again.");
   });
       // Close the modal after submission
       handleClose();

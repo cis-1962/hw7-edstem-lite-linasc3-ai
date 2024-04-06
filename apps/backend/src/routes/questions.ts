@@ -13,7 +13,7 @@ router.post('/questions/add', requireAuth, async (req, res, next) => {
     const {questionText} = req.body; 
 
     // get author from cookie session
-    const author = req.session?.user?.id
+    const author = req.session?.user?.username
 
     // make sure the details exist 
     // don't need to check for answer because may not be an answer yet 
@@ -73,7 +73,7 @@ router.post('/questions/answer', requireAuth, async (req, res, next) => {
  // now let's try to update field 
  try { 
     const question = await Question.findById(_id); // need to use mongo's FindById method to search our questions to see if one matches specified id 
-    
+
     if (!question) { 
         // if we couldn't find the question matching the id, then we need to return not found error 
         return res.status(404).send({message: "Question not found."});
