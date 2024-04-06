@@ -27,7 +27,7 @@ function Home() {
     // every time page renders, check whether user is logged in 
     // and update state to decide whether or not we should show 
     // certain view 
-
+      
     useEffect(() => {
         const fetchAuthStatus = async () => {
             try {

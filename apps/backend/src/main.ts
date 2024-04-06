@@ -64,15 +64,16 @@ app.use(errorHandler);
 
 // left these here so database can be accessed for grading, 
 // but in theory should be in .env file  
-const username = encodeURIComponent("lchihoub");
-const password = encodeURIComponent("Flj1umf1Zq1B9uYl");
-
+    const dbUsername = encodeURIComponent(process.env.DB_USERNAME!);
+    const dbPassword = encodeURIComponent(process.env.DB_PASSWORD!);
+    const dbClusterUrl = process.env.DB_CLUSTER_URL;
+    const dbName = process.env.DB_NAME;
+  
 // connect to database
 const startServer = async() => {
   try { // wrap in try catch block for error handling in case error arises when connecting to database 
   // 4. Connect to MongoDB
-  await mongoose.connect(`mongodb+srv://${username}:${password}@data1.fpni7cl.mongodb.net/?retryWrites=true&w=majority&appName=data1`)
-
+  await mongoose.connect(`mongodb+srv://${dbUsername}:${dbPassword}@${dbClusterUrl}/?retryWrites=true&w=majority&appName=${dbName}`);
   console.log("Connected"); 
 
   // listen only after you've established the database connection 
