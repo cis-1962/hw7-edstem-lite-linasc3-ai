@@ -17,7 +17,7 @@ function Login() {
         
         // format user in object database expects 
         const user = {
-            name: username, 
+            username: username, 
             password: password
         };
 

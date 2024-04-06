@@ -33,7 +33,7 @@ function Home() {
             try {
                 const response = await axios.get('/api/account/auth/status');
                 setLoggedIn(response.data.loggedIn);
-                setUsersName(response.data.username);
+                setUsersName(response.data.user.username);
             } catch (error) {
                 console.error('Error fetching auth status:', error);
             }
@@ -72,7 +72,7 @@ function Home() {
         // format data ... only need ot send questionText 
         // i don't think this is correct because u should just be able to submit answer 
         const questionData = {
-            questionAnswer: question.questionAnswer
+            questionAnswer: questionAnswer
         };
 
         try {
@@ -105,55 +105,52 @@ function Home() {
   if (loggedIn) { 
     return (
     <> 
-    <div style={{ display: 'flex', minHeight: '250vh', minWidth: "250vh", flexDirection: 'column' }}>
-
+ <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', backgroundColor: "pink" }}>
     <div className="header" style={{ 
-      flex: '0 1 auto', 
+      width: '100%', 
       padding: '20px', 
       backgroundColor: '#A94064', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      color: "white"
-  }}>
-    <h1 style={{ 
-        margin: 0, 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center'
+      color: "white", 
+      textAlign: 'center' 
     }}>
-          CampusWire Lite
-          <span>Hi {usersName}</span>
-        </h1>
-        <Button variant="primary" type="submit" onClick={handleLogOut} style={{ marginTop: '10px' }}>
-          Log Out
-        </Button>
-      </div>
+      <h1 style={{ margin: 0 }}>CampusWire Lite</h1>
+      <h2> Hi {usersName}! </h2> 
+      <Button variant="primary" onClick={handleLogOut} style={{ marginTop: '10px' }}>
+        Log Out
+      </Button>
+    </div>
 
-      <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'row', backgroundColor: "pink", padding: '500px' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', marginTop: '20px', width: '90%', maxWidth: '1200px' }}>
       <div className='left-pane' style={{ 
-      flex: '1 2 250px', /* fixed width for the sidebar */
-      backgroundColor: '#fff', 
-      padding: '20px', 
-      boxShadow: 'inset -1px 0px 0px rgba(0,0,0,0.1)', 
-      overflowY: 'auto' /* if there are many questions, enable scrolling */
-    }}>
+        flex: 1, 
+        backgroundColor: '#fff', 
+        padding: '20px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+        overflowY: 'auto', /* if there are many questions, enable scrolling */
+        height: '600px', /* Fixed height for scroll */
+      }}>
     {/* define an add new question button that sends a post request*/}
 
-    <Button variant="primary" type="submit" onClick={(addNewQuestion)} style={{marginBottom: '30px'}}>
-              Add New Question + 
-    </Button>
+    <Button variant="primary" onClick={addNewQuestion} style={{ marginBottom: '20px' }}>
+          Add New Question +
+        </Button>
 
-    {data && data.length > 0 ? (
-        <ul>
+
+        {data && data.length > 0 ? (
+          <ul style={{ listStyle: 'none', padding: 0 }}>
             {data.map((question) => (
-                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-                <li key={question.id} className="card" style={{ width: '200px', height: "200px"}} onClick={() => handleCardClick(question)}>
-                    <h5 className="card-title">{question.questionText}</h5>
-                </li>
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+              <li key={question.id} style={{ marginBottom: '10px', cursor: 'pointer' }} onClick={() => handleCardClick(question)}>
+                <div className="card" style={{ padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                  <h5 className="card-title">{question.questionText}</h5>
+                </div>
+              </li>
             ))}
-        </ul>
-    ) : (
-        <p>No questions yet. Add a question to begin!</p>
-    )}
+          </ul>
+        ) : (
+          <p>No questions yet. Add a question to begin!</p>
+        )}
 
         {/* only show the modal when state is true, also closing makes modal not show by setting state to false*/}
         <QuestionModal
@@ -164,33 +161,35 @@ function Home() {
     </div>
 
     <div className="right-pane" style={{ 
-      flex: '1', 
-      backgroundColor: '#fff', 
-      padding: '20px', 
-      overflowY: 'auto' /* if content is too long, enable scrolling */
-    }}>
+        flex: 2, 
+        backgroundColor: '#fff', 
+        padding: '20px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+        overflowY: 'auto', /* if content is too long, enable scrolling */
+        height: '600px', /* Fixed height for scroll */
+      }}>
         {/* display selected question */}
         
         {displayedQuestion ? (
-                     <><div className="card">
-                    <h5 className="card-title"> {displayedQuestion.questionText}</h5>
-                    <em> Author: </em>
-                    <p> {displayedQuestion.author.username} </p>
-                    <em> Answer: </em>
-                    <p> {displayedQuestion.answer} </p>
-                </div><div className="answerQuestion">
-                        <Form onSubmit={handleSubmitAnswer}>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>Answer this question:</Form.Label>
-                                <Form.Control type="textarea" placeholder="Enter answer" value={questionAnswer} onChange={e => setQuestionAnswer(e.target.value)} />
-                            </Form.Group>
-                        </Form>
-
-                        <Button variant="primary" type="submit" onClick={handleSubmitAnswer}>
-                            Submit Answer
-                        </Button>
-                    </div></> 
-                    ) : "Click a question to view details."}
+          <>
+            <div className="card" style={{ marginBottom: '20px' }}>
+              <h5 className="card-title">{displayedQuestion.questionText}</h5>
+              <p><em>Author:</em> {displayedQuestion.author.username}</p>
+              <p><em>Answer:</em> {displayedQuestion.answer}</p>
+            </div>
+            <div className="answerQuestion">
+              <Form onSubmit={handleSubmitAnswer}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Answer this question:</Form.Label>
+                  <Form.Control as="textarea" placeholder="Enter answer" value={questionAnswer} onChange={e => setQuestionAnswer(e.target.value)} />
+                </Form.Group>
+                <Button variant="primary" type="submit">
+                  Submit Answer
+                </Button>
+              </Form>
+            </div>
+          </>
+        ) : "Click a question to view details."}
 
     </div> 
     </div> 
@@ -202,40 +201,41 @@ function Home() {
   } else { // user is logged out
     return (
     <>
-    <div style={{ display: 'flex', minHeight: '250vh', minWidth: "250vh", flexDirection: 'column' }}>
-    <div className="header" style={{ 
-      flex: '1 2 250px',
-      padding: '20px', 
-      backgroundColor: '#A94064', 
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      color: "white" 
-  }}>
-    <h1 style={{display: 'flex', justifyContent: 'flex-start'}}> CampusWire Lite </h1> 
-    </div> 
+   <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: "pink" }}>
+      <div className="header" style={{ 
+        width: '100%',
+        padding: '20px', 
+        backgroundColor: '#A94064', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        color: "white",
+        textAlign: 'center' 
+      }}>
+        <h1>CampusWire Lite</h1>
+      </div> 
 
-    <div className='left-pane' style={{ 
-      flex: '0 0 250px', /* fixed width for the sidebar */
-      backgroundColor: '#fff', 
-      padding: '20px', 
-      boxShadow: 'inset -1px 0px 0px rgba(0,0,0,0.1)', 
-      overflowY: 'auto' /* if there are many questions, enable scrolling */
-    }}>
-          <Button variant="primary" type="submit" onClick={routeChange} style={{marginBottom: '50px'}}>
-              Log in to submit a question 
-          </Button>
+      <div style={{ 
+        marginTop: '50px', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center'
+      }}>
+        <Button variant="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
+          Log in to submit a question 
+        </Button>
 
-          {data && data.length > 0 ? (
-        <ul>
+        {data && data.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
             {data.map((question) => (
-                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-                <li key={question.id} className="card" style={{ width: '100px', height: "100px"}} onClick={() => handleCardClick(question)}>
-                    <h5 className="card-title">{question.questionText}</h5>
-                </li>
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+              <div key={question.id} className="card" style={{ padding: '20px', width: '200px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => handleCardClick(question)}>
+                <h5 className="card-title">{question.questionText}</h5>
+              </div>
             ))}
-        </ul>
-    ) : (
-        <p>No questions yet. Add a question to begin!</p>
-    )}
+          </div>
+        ) : (
+          <p>No questions yet. Log in to add a question!</p>
+        )}
 
       </div>
         {/* conditionally display based on which question selected 
