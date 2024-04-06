@@ -28,16 +28,19 @@ function Home() {
     // and update state to decide whether or not we should show 
     // certain view 
 
-    // useEffect(() => {
-    //     axios.get('/api/account/auth/status')
-    //         .then(response => {
-    //             setLoggedIn(response.data.loggedIn);
-    //             setUsersName(response.data.username);
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching auth status:', error);
-    //         });
-    // }, []);
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            try {
+                const response = await axios.get('/api/account/auth/status');
+                setLoggedIn(response.data.loggedIn);
+                setUsersName(response.data.username);
+            } catch (error) {
+                console.error('Error fetching auth status:', error);
+            }
+        };
+    
+        fetchAuthStatus();
+    }, []);
 
     // navigate to log in when you click the log in button 
     const routeChange = () => {
@@ -50,22 +53,20 @@ function Home() {
     }
 
     // handle logging out 
-    const handleLogOut = () => {
-        setLoggedIn(false); 
-        axios.post("/api/account/logout") 
-        .then(res => {
-            console.log(res); 
+    const handleLogOut = async () => {
+        setLoggedIn(false);
+        try {
+            const res = await axios.post("/api/account/logout");
+            console.log(res);
             console.log(res.data);
-        })
-        .catch(error => {
-            // alert if failed 
+        } catch (error) {
             console.error('There was an error!', error);
-            alert("Failed to log out. Please try again.");
-        });
-    }
+            setLoggedIn(true);
+        }
+    };
 
     // handle submitting the answer 
-    const handleSubmitAnswer = (question) => {
+    const handleSubmitAnswer = async (question) => {
         question.preventDefault(); 
         
         // format data ... only need ot send questionText 
@@ -74,21 +75,21 @@ function Home() {
             questionAnswer: question.questionAnswer
         };
 
-        axios.post("/api/questions/answer", questionData) // send post request to add new question answer to database 
-            .then(res => {
-                console.log(res); 
-                console.log(res.data);
-                // needs to continually update 
-            })
-            .catch(error => {
-                // alert if failed 
-                console.error('There was an error!', error);
-                alert("Failed to add answer. Try again.");
-            });
+        try {
+            const res = await axios.post("/api/questions/answer", questionData);
+            console.log(res);
+            console.log(res.data);
+
+        } catch (error) {
+            console.error('There was an error!', error);
+        }
     }
 
     // retrieve JSON of question objects 
-    const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+    const fetcher = async (url: string) => {
+        const res = await axios.get(url);
+        return res.data;
+      };
 
     // destructure JSON object to retrieve data returned from fetcher 
     const { data } = useSWR('/api/questions/', fetcher)
@@ -104,14 +105,14 @@ function Home() {
   if (loggedIn) { 
     return (
     <> 
-    <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', minHeight: '250vh', minWidth: "250vh", flexDirection: 'column' }}>
 
     <div className="header" style={{ 
       flex: '0 1 auto', 
       padding: '20px', 
       backgroundColor: '#A94064', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      color: "white" 
+      color: "white"
   }}>
     <h1 style={{ 
         margin: 0, 
@@ -129,7 +130,7 @@ function Home() {
 
       <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'row', backgroundColor: "pink", padding: '500px' }}>
       <div className='left-pane' style={{ 
-      flex: '0 0 250px', /* fixed width for the sidebar */
+      flex: '1 2 250px', /* fixed width for the sidebar */
       backgroundColor: '#fff', 
       padding: '20px', 
       boxShadow: 'inset -1px 0px 0px rgba(0,0,0,0.1)', 
@@ -137,19 +138,22 @@ function Home() {
     }}>
     {/* define an add new question button that sends a post request*/}
 
-    <Button variant="primary" type="submit" onClick={(addNewQuestion)}>
+    <Button variant="primary" type="submit" onClick={(addNewQuestion)} style={{marginBottom: '30px'}}>
               Add New Question + 
     </Button>
 
-    {/* display the questions on left panel*/}
-    <ul>
+    {data && data.length > 0 ? (
+        <ul>
             {data.map((question) => (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-            <li key={question.id} className="card" style={{ width: '50rem' }} onClick={() => handleCardClick(question)}>
-            <h5 className="card-title">{question.questionText}</h5>
-            </li>
-        ))}
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+                <li key={question.id} className="card" style={{ width: '200px', height: "200px"}} onClick={() => handleCardClick(question)}>
+                    <h5 className="card-title">{question.questionText}</h5>
+                </li>
+            ))}
         </ul>
+    ) : (
+        <p>No questions yet. Add a question to begin!</p>
+    )}
 
         {/* only show the modal when state is true, also closing makes modal not show by setting state to false*/}
         <QuestionModal
@@ -166,10 +170,10 @@ function Home() {
       overflowY: 'auto' /* if content is too long, enable scrolling */
     }}>
         {/* display selected question */}
-
+        
         {displayedQuestion ? (
-                        <><div className="card">
-                    <h5 className="card-title">{displayedQuestion.questionText}</h5>
+                     <><div className="card">
+                    <h5 className="card-title"> {displayedQuestion.questionText}</h5>
                     <em> Author: </em>
                     <p> {displayedQuestion.author.username} </p>
                     <em> Answer: </em>
@@ -198,9 +202,9 @@ function Home() {
   } else { // user is logged out
     return (
     <>
-    <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', padding: "300px", backgroundColor: "pink"}}>
+    <div style={{ display: 'flex', minHeight: '250vh', minWidth: "250vh", flexDirection: 'column' }}>
     <div className="header" style={{ 
-      flex: '0 1 auto', 
+      flex: '1 2 250px',
       padding: '20px', 
       backgroundColor: '#A94064', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
@@ -216,7 +220,7 @@ function Home() {
       boxShadow: 'inset -1px 0px 0px rgba(0,0,0,0.1)', 
       overflowY: 'auto' /* if there are many questions, enable scrolling */
     }}>
-          <Button variant="primary" type="submit" onClick={routeChange}>
+          <Button variant="primary" type="submit" onClick={routeChange} style={{marginBottom: '50px'}}>
               Log in to submit a question 
           </Button>
 
@@ -224,7 +228,7 @@ function Home() {
         <ul>
             {data.map((question) => (
                 // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-                <li key={question.id} className="card" style={{ width: '10rem' }} onClick={() => handleCardClick(question)}>
+                <li key={question.id} className="card" style={{ width: '100px', height: "100px"}} onClick={() => handleCardClick(question)}>
                     <h5 className="card-title">{question.questionText}</h5>
                 </li>
             ))}
