@@ -114,7 +114,7 @@ function Home() {
     const { data } = useSWR('/api/questions/', fetcher, { refreshInterval: 2000 })
 
     // refreshInterval will automatically fetch every 2 seconds 
-    
+
     // handle error fetching questions 
 
     // handle clicking on card 
@@ -222,16 +222,16 @@ function Home() {
   } else { // user is logged out
     return (
     <>
-   <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: "pink" }}>
-      <div className="header" style={{ 
-        width: '100%',
-        padding: '20px', 
-        backgroundColor: '#A94064', 
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        color: "white",
-        textAlign: 'center' 
-      }}>
-        <h1>CampusWire Lite</h1>
+   <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', backgroundColor: "pink" }}>
+    <div className="header" style={{ 
+      width: '100%', 
+      padding: '20px', 
+      backgroundColor: '#A94064', 
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      color: "white", 
+      textAlign: 'center' 
+    }}>
+        <h1 style={{ margin: 0 }}>CampusWire Lite</h1>
       </div> 
 
       <div style={{ 
@@ -241,7 +241,19 @@ function Home() {
         alignItems: 'center', 
         justifyContent: 'center'
       }}>
-        <Button variant="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
+
+
+    <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', marginTop: '20px', width: '90%', maxWidth: '1200px' }}>
+      <div className='left-pane' style={{ 
+        flex: 1, 
+        backgroundColor: '#fff', 
+        padding: '20px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+        overflowY: 'auto', /* if there are many questions, enable scrolling */
+        height: '600px', /* Fixed height for scroll */
+      }}>
+
+<Button variant="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
           Log in to submit a question 
         </Button>
 
@@ -257,8 +269,7 @@ function Home() {
         ) : (
           <p>No questions yet. Log in to add a question!</p>
         )}
-
-      </div>
+    </div> 
         {/* conditionally display based on which question selected 
         if there is something selected, display it, otherwise tell them to select */}
         <div className="right-pane" style={{ 
@@ -277,6 +288,8 @@ function Home() {
                         </div>
                     ) : "Click a question to view details."}
         </div>
+        </div> 
+        </div> 
         </div> 
         </>
         )} 
