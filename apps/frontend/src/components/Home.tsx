@@ -195,7 +195,7 @@ function Home() {
           <>
             <div className="card" style={{ marginBottom: '20px' }}>
               <h5 className="card-title">{displayedQuestion.questionText}</h5>
-              <p><em>Author:</em> {usersName}</p>
+              <p><em>Author:</em> {displayedQuestion.author}</p>
               <p><em>Answer:</em> {displayedQuestion.answer}</p>
             </div>
             <div className="answerQuestion">
@@ -282,7 +282,7 @@ function Home() {
                         <div className="card">
                             <h5 className="card-title">{displayedQuestion.questionText}</h5>
                             <em> Author: </em> 
-                            <p> {usersName} </p> 
+                            <p> {displayedQuestion.author} </p> 
                             <em> Answer: </em> 
                             <p> {displayedQuestion.answer} </p> 
                         </div>

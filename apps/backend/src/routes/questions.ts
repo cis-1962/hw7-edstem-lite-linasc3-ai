@@ -14,6 +14,7 @@ router.post('/questions/add', requireAuth, async (req, res, next) => {
 
     // get author from cookie session
     const author = req.session?.user?.username
+    console.log(author)
 
     // make sure the details exist 
     // don't need to check for answer because may not be an answer yet 
